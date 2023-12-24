@@ -37,10 +37,16 @@ export const FormStyle = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 8,
     backgroundColor: COLORS.White,
-    elevation: 20,
-    shadowColor: 'rgba(0, 0, 0, 0.5)',
+    fontWeight: '300',
+    // elevation: 2,
+    // shadowOffset: {
+    //   width: 10,
+    //   height: 20,
+    // },
+    // shadowColor: 'rgba(0, 0, 0, 5)',
     color: COLORS.Text,
   },
+
   submitBtn: {
     paddingHorizontal: 32,
     paddingVertical: 7,

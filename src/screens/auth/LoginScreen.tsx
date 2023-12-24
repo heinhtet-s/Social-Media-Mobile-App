@@ -11,11 +11,28 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 
 import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {FormStyle, Typograhpy, WrapperStyle} from '../../GlobalStyle';
 import {COLORS} from '../../theme/theme';
-
+import {useForm, Controller} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {LoginFormData, LoginSchema} from '../../lib/services/LoginService';
+import CustomInput from '../../components/CustomInput';
 export default function LoginScreen() {
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    control,
+    reset,
+    formState: {errors},
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
+  });
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
+  console.log('error', errors);
+
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   return (
     <ScrollView style={WrapperStyle.container}>
@@ -35,12 +52,15 @@ export default function LoginScreen() {
         ]}>
         An OTP code will be sent to your email
       </Text>
-
-      <TextInput
-        placeholderTextColor={COLORS.Text}
-        style={FormStyle.input}
-        placeholder="useless placeholder"
-      />
+      <View>
+        {/* <CustomInput errors={errors} /> */}
+        <CustomInput
+          name="email"
+          errors={errors.email}
+          register={register}
+          placeholder="Email"
+        />
+      </View>
       <View
         style={{
           flexDirection: 'row',
@@ -51,7 +71,7 @@ export default function LoginScreen() {
           disabled={false}
           value={toggleCheckBox}
           tintColors={{
-            true: 'rgba(0, 0, 0, 0.20)',
+            true: COLORS.Primary,
             false: 'rgba(0, 0, 0, 0.20)',
           }}
           onValueChange={newValue => setToggleCheckBox(newValue)}
@@ -62,7 +82,9 @@ export default function LoginScreen() {
           <Text style={styles.noticeText}> Terms of Use.</Text>
         </Text>
       </View>
-      <TouchableOpacity style={FormStyle.submitBtn}>
+      <TouchableOpacity
+        onPress={handleSubmit(onSubmit)}
+        style={FormStyle.submitBtn}>
         <Text style={Typograhpy.btnText}>Send Otp</Text>
       </TouchableOpacity>
       <Text
