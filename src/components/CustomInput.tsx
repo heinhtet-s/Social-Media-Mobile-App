@@ -2,41 +2,67 @@ import {View, Text, TextInput, Image} from 'react-native';
 import React from 'react';
 import {FormStyle} from '../GlobalStyle';
 import {COLORS} from '../theme/theme';
-// import {WarningIcon} from '../assets/images/WarningIcon';
-type CustomInputProps = {
-  name: string;
-
-  errors: any;
-  register: any;
+import WarningIcon from '../assets/images/svg/WarningIcon.svg';
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  FieldError,
+} from 'react-hook-form';
+interface CustomTextInputProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
+  errors: FieldError | undefined;
   placeholder: string;
-};
-const CustomInput = ({
+}
+const CustomTextInput = <T extends FieldValues>({
+  control,
   name,
   errors,
-  register,
   placeholder,
-}: CustomInputProps) => {
+  ...props
+}: CustomTextInputProps<T>) => {
   return (
     <>
-      <TextInput
-        style={[
-          FormStyle.input,
-          errors && {borderColor: COLORS.Primary, borderWidth: 1},
-        ]}
-        placeholder={placeholder}
-        placeholderTextColor={COLORS.Text}
+      <Controller
+        control={control}
+        render={({field: {onChange, onBlur, value}}) => (
+          <TextInput
+            {...props}
+            placeholder={placeholder}
+            placeholderTextColor={COLORS.Text}
+            onBlur={onBlur}
+            onChangeText={onChange}
+            style={[
+              FormStyle.input,
+              errors && {borderColor: COLORS.Primary, borderWidth: 1},
+            ]}
+            value={value}
+          />
+        )}
+        name={name}
       />
-      {true && (
-        <View>
-          {/* <WarningIcon /> */}
+      {errors && (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginTop: 5,
+          }}>
+          <WarningIcon height={20} />
+
           <Text
             style={{
               alignItems: 'center',
               color: COLORS.Primary,
               fontSize: 14,
               fontWeight: '400',
+              marginLeft: 4,
+              lineHeight: 20,
             }}>
-            {errors?.message || 'This field is required'}
+            {errors?.message}
+            {/* {errors[name]?.message || 'This field is required'} */}
           </Text>
         </View>
       )}
@@ -44,4 +70,4 @@ const CustomInput = ({
   );
 };
 
-export default CustomInput;
+export default CustomTextInput;

@@ -38,6 +38,7 @@ export const FormStyle = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: COLORS.White,
     fontWeight: '300',
+    marginBottom: 10,
     // elevation: 2,
     // shadowOffset: {
     //   width: 10,

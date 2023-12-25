@@ -16,6 +16,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SplashScreen from 'react-native-splash-screen';
 import LoginScreen from './src/screens/auth/LoginScreen';
+import OTPScreen from './src/screens/auth/OtpScreen';
+import SignUpScreen from './src/screens/auth/SignUpScreen';
 
 function App(): JSX.Element {
   const Stack = createNativeStackNavigator();
@@ -34,7 +36,10 @@ function App(): JSX.Element {
           gestureDirection: 'horizontal',
           presentation: 'modal',
         }}>
+        <Stack.Screen name="Register" component={SignUpScreen} />
+        <Stack.Screen name="Otp" component={OTPScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </NavigationContainer>

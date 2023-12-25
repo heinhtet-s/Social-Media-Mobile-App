@@ -17,7 +17,8 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {LoginFormData, LoginSchema} from '../../lib/services/LoginService';
 import CustomInput from '../../components/CustomInput';
-export default function LoginScreen() {
+import CustomTextInput from '../../components/CustomInput';
+export default function LoginScreen({navigation}: {navigation: any}) {
   const {
     register,
     setValue,
@@ -30,6 +31,7 @@ export default function LoginScreen() {
   });
   const onSubmit = (data: any) => {
     console.log(data);
+    navigation.navigate('OtpScreen');
   };
   console.log('error', errors);
 
@@ -54,10 +56,27 @@ export default function LoginScreen() {
       </Text>
       <View>
         {/* <CustomInput errors={errors} /> */}
-        <CustomInput
+        {/* <Controller
+          control={control}
+          render={({field: {onChange, onBlur, value}}) => (
+            <TextInput
+              placeholder="First name"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              style={[
+                FormStyle.input,
+                errors.email && {borderColor: COLORS.Primary, borderWidth: 1},
+              ]}
+              value={value}
+            />
+          )}
+          name="email"
+        /> */}
+
+        <CustomTextInput
           name="email"
           errors={errors.email}
-          register={register}
+          control={control}
           placeholder="Email"
         />
       </View>
