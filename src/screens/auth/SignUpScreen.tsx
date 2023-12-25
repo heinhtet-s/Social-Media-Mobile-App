@@ -60,12 +60,12 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
   return (
     <KeyboardAvoidingWrapper style={WrapperStyle.container}>
       <View>
-        {/* <View style={styles.imageWrapper}>
+        <View style={styles.imageWrapper}>
           <Image
             style={styles.image}
             source={require('../../assets/images/Login.png')}
           />
-        </View> */}
+        </View>
 
         <Text style={Typograhpy.h1}>Sign up</Text>
         <Text

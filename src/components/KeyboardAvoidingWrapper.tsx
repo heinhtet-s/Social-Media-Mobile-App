@@ -19,13 +19,12 @@ export default function KeyboardAvoidingWrapper({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'android' ? 75 : 0}
+      //   keyboardVerticalOffset={Platform.OS === 'android' ? 75 : 0}
       style={{flex: 1}}>
       <ScrollView
         style={[
           {
             flex: 1,
-            backgroundColor: 'white',
           },
           style,
         ]}>
