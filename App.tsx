@@ -36,9 +36,9 @@ function App(): JSX.Element {
           gestureDirection: 'horizontal',
           presentation: 'modal',
         }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={SignUpScreen} />
         <Stack.Screen name="Otp" component={OTPScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
 
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>

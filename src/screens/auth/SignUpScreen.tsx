@@ -59,14 +59,13 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   return (
     <KeyboardAvoidingWrapper style={WrapperStyle.container}>
-      <View>
+      <>
         <View style={styles.imageWrapper}>
           <Image
             style={styles.image}
             source={require('../../assets/images/Login.png')}
           />
         </View>
-
         <Text style={Typograhpy.h1}>Sign up</Text>
         <Text
           style={[
@@ -171,7 +170,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
           style={{
             flexDirection: 'row',
             marginTop: 24,
-            marginBottom: 32,
+            marginBottom: 24,
           }}>
           <CheckBox
             disabled={false}
@@ -191,7 +190,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           style={FormStyle.submitBtn}>
-          <Text style={Typograhpy.btnText}>Send Otp</Text>
+          <Text style={Typograhpy.btnText}>Sign up</Text>
         </TouchableOpacity>
 
         <Text
@@ -199,13 +198,14 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
             Typograhpy.text,
             {
               marginTop: 12,
+              marginBottom: 30,
               textAlign: 'center',
             },
           ]}>
           Don’t have an account?{' '}
           <Text style={styles.noticeText}>Sign Up Now</Text>
         </Text>
-      </View>
+      </>
     </KeyboardAvoidingWrapper>
   );
 }
