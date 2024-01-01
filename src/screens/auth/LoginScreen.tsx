@@ -88,15 +88,24 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             marginTop: 24,
             marginBottom: 32,
           }}>
-          <CheckBox
-            disabled={false}
-            value={toggleCheckBox}
-            tintColors={{
-              true: COLORS.Primary,
-              false: 'rgba(0, 0, 0, 0.20)',
-            }}
-            onValueChange={newValue => setToggleCheckBox(newValue)}
-          />
+          <View style={{}}>
+            <CheckBox
+              disabled={false}
+              value={toggleCheckBox}
+              style={{
+                marginRight: 20,
+              }}
+              boxType="square"
+              onFillColor={COLORS.Primary}
+              onCheckColor={COLORS.White}
+              onTintColor={COLORS.Primary}
+              // tintColors={{
+              //   true: COLORS.Primary,
+              //   false: 'rgba(0, 0, 0, 0.20)',
+              // }}
+              onValueChange={newValue => setToggleCheckBox(newValue)}
+            />
+          </View>
           <Text style={[Typograhpy.label]}>
             By clicking "Next", I have read, understood, and given my{' '}
             <Text style={styles.noticeText}>consent</Text> and accepted the
@@ -113,7 +122,7 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             Typograhpy.text,
             {
               marginTop: 12,
-              marginBottom: 30,
+              marginBottom: 60,
               textAlign: 'center',
             },
           ]}>

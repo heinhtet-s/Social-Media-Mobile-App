@@ -8,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
+
 import React, {useState} from 'react';
 import {FormStyle, Typograhpy, WrapperStyle} from '../../GlobalStyle';
 import {COLORS} from '../../theme/theme';
@@ -18,6 +18,7 @@ import CustomTextInput from '../../components/CustomInput';
 import SelectDropdown from 'react-native-select-dropdown';
 import {SignUpFormData, SignUpSchema} from '../../lib/services/SignUpService';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
+import CheckBox from '@react-native-community/checkbox';
 export default function SignUpScreen({navigation}: {navigation: any}) {
   const {
     register,
@@ -55,8 +56,8 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
     navigation.navigate('OtpScreen');
   };
   console.log('error', errors);
-
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
   return (
     <KeyboardAvoidingWrapper style={WrapperStyle.container}>
       <>
@@ -172,15 +173,47 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
             marginTop: 24,
             marginBottom: 24,
           }}>
-          <CheckBox
-            disabled={false}
-            value={toggleCheckBox}
-            tintColors={{
-              true: COLORS.Primary,
-              false: 'rgba(0, 0, 0, 0.20)',
-            }}
-            onValueChange={newValue => setToggleCheckBox(newValue)}
-          />
+          {Platform.OS === 'ios' ? (
+            <CheckBox
+              disabled={false}
+              value={toggleCheckBox}
+              style={{
+                width: 20,
+                height: 20,
+                marginRight: 12,
+              }}
+              boxType="square"
+              onFillColor={COLORS.Primary}
+              onCheckColor={COLORS.White}
+              onTintColor="transparent"
+              // tintColors={{
+              //   true: COLORS.Primary,
+              //   false: 'rgba(0, 0, 0, 0.20)',
+              // }}
+              onValueChange={newValue => {
+                console.log('newValue', newValue);
+                setToggleCheckBox(newValue);
+              }}
+            />
+          ) : (
+            <CheckBox
+              disabled={false}
+              value={toggleCheckBox}
+              boxType="square"
+              onFillColor={COLORS.Primary}
+              onCheckColor={COLORS.White}
+              onTintColor={COLORS.Primary}
+              tintColors={{
+                true: COLORS.Primary,
+                false: 'rgba(0, 0, 0, 0.20)',
+              }}
+              onValueChange={newValue => {
+                console.log('newValue', newValue);
+                setToggleCheckBox(newValue);
+              }}
+            />
+          )}
+
           <Text style={[Typograhpy.label]}>
             By clicking "Next", I have read, understood, and given my{' '}
             <Text style={styles.noticeText}>consent</Text> and accepted the
@@ -198,7 +231,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
             Typograhpy.text,
             {
               marginTop: 12,
-              marginBottom: 30,
+              marginBottom: 60,
               textAlign: 'center',
             },
           ]}>

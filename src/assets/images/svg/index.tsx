@@ -1,0 +1,11 @@
+export {default as HomeActiveIcon} from './HomeActive.svg';
+export {default as HomeOutlineIcon} from './HomeOutline.svg';
+export {default as BrowseActiveIcon} from './BrowseActive.svg';
+export {default as BrowseOutlineIcon} from './BrowseOutline.svg';
+export {default as MentorActive} from './MentorActive.svg';
+export {default as MentorOutline} from './MentorOutline.svg';
+export {default as ProfileActive} from './ProfileActive.svg';
+export {default as ProfileOutline} from './ProfileOutline.svg';
+export {default as SaveActive} from './SaveActive.svg';
+export {default as SaveOutline} from './SaveOutline.svg';
+export {default as SearchIcon} from './Search.svg';

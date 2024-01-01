@@ -21,42 +21,30 @@ export default function KeyboardAvoidingWrapper({
     // Add listener for keyboard show event
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => {
-        scrollViewRef.current?.scrollToEnd({animated: true});
-        // You can perform additional actions when the keyboard shows
+      e => {
+        scrollViewRef.current?.scrollTo({
+          y: e.endCoordinates.height + 90,
+          animated: true,
+        });
       },
     );
 
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        scrollViewRef.current?.scrollTo({
-          y: 0,
-          animated: true,
-        });
-        // You can perform additional actions when the keyboard hides
-      },
-    );
     return () => {
       keyboardDidShowListener.remove();
     };
   }, []); // Empty dependency array means this useEffect runs once (similar to componentDidMount)
   const scrollViewRef = React.useRef<ScrollView>(null);
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      style={[{flex: 1, backgroundColor: '#fff'}]}>
-      <ScrollView
-        automaticallyAdjustKeyboardInsets={true}
-        ref={scrollViewRef}
-        keyboardShouldPersistTaps="handled"
-        style={style}
-        bounces={false}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          {children}
-        </TouchableWithoutFeedback>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    <SafeAreaView style={{flex: 1}}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={[{flex: 1, backgroundColor: '#fff'}]}>
+        <ScrollView ref={scrollViewRef} style={style} bounces={false}>
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            {children}
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
