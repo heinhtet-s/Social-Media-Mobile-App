@@ -19,7 +19,9 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import OTPScreen from './src/screens/auth/OtpScreen';
 import SignUpScreen from './src/screens/auth/SignUpScreen';
 import RootNavigaion from './src/navigators/RootNavigation';
-
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import 'react-native-gesture-handler';
+import {NativeViewGestureHandler} from 'react-native-gesture-handler';
 function App(): JSX.Element {
   const Stack = createNativeStackNavigator();
   const isDarkMode = useColorScheme() === 'dark';
@@ -27,7 +29,11 @@ function App(): JSX.Element {
     SplashScreen.hide();
   }, []);
 
-  return <RootNavigaion />;
+  return (
+    <GestureHandlerRootView style={{flex: 1}}>
+      <RootNavigaion />
+    </GestureHandlerRootView>
+  );
 }
 //   <SafeAreaView style={{flex: 1}}>
 //     <StatusBar animated={true} backgroundColor={COLORS.Black} />

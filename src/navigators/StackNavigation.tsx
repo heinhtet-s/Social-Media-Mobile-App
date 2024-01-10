@@ -9,6 +9,7 @@ import OTPScreen from '../screens/auth/OtpScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import HomeScreen from '../screens/HomeScreen';
 import BottomTabNavigation from './BottomTabNavigation';
+import VideoDetailScreen from '../screens/VideoDetailScreen';
 
 export default function StackNavigation() {
   const Stack = createNativeStackNavigator();
@@ -22,7 +23,12 @@ export default function StackNavigation() {
           gestureDirection: 'horizontal',
           presentation: 'modal',
         }}>
-        <Stack.Screen name="auth" component={BottomTabNavigation} />
+        <Stack.Screen
+          name="Detail"
+          component={VideoDetailScreen}
+          options={{orientation: 'all'}}
+        />
+        {/* <Stack.Screen name="auth" component={BottomTabNavigation} /> */}
         <Stack.Screen name="Register" component={SignUpScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Otp" component={OTPScreen} />

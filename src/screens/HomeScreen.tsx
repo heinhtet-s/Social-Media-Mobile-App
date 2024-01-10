@@ -130,6 +130,7 @@ export default function HomeScreen({navigation}: any) {
   return (
     <Tab.Navigator
       screenOptions={{
+        swipeEnabled: false,
         tabBarAndroidRipple: {
           color: 'transparent',
           borderless: true,
@@ -137,7 +138,7 @@ export default function HomeScreen({navigation}: any) {
         tabBarScrollEnabled: true,
         tabBarStyle: {
           flexDirection: 'row',
-
+          zIndex: 1,
           alignSelf: 'flex-start',
           justifyContent: 'flex-start',
         },
