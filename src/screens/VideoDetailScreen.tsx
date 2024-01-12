@@ -10,10 +10,21 @@ import {
 import React, {useEffect, useRef, useState} from 'react';
 import Video from 'react-native-video';
 import {TouchableOpacity} from '@gorhom/bottom-sheet';
-import {PauseIcon, VolumeIcon, VolumeMuteIcon} from '../assets/images/svg';
+import {
+  FullScreenExitIcon,
+  FullScreenIcon,
+  PauseIcon,
+  VolumeIcon,
+  VolumeMuteIcon,
+} from '../assets/images/svg';
 import {Slider} from 'react-native-awesome-slider';
 import {useSharedValue} from 'react-native-reanimated';
 import {COLORS} from '../theme/theme';
+import Orientation, {
+  OrientationLocker,
+  PORTRAIT,
+  LANDSCAPE,
+} from 'react-native-orientation-locker';
 // import {
 //   OrientationLocker,
 //   PORTRAIT,
@@ -33,6 +44,7 @@ export default function VideoDetailScreen() {
   const [isLoading, setIsLoading] = useState(true);
   const min = useSharedValue(0);
   const [volume, setVolume] = useState(false);
+
   const handleLoadStart = () => {
     setIsLoading(true); // Set loading state to true when video starts loading
     console.log('duration');
@@ -85,6 +97,13 @@ export default function VideoDetailScreen() {
         backgroundColor: '#000',
         height: Dimensions.get('window').height - 130,
       }}>
+      {/* <OrientationLocker
+        orientation={LANDSCAPE}
+        onChange={orientation => console.log('onChange', orientation)}
+        onDeviceChange={orientation =>
+          console.log('onDeviceChange', orientation)
+        }
+      /> */}
       {/* <OrientationLocker
         orientation={PORTRAIT}
         onChange={orientation => console.log('onChange', orientation)}
@@ -160,10 +179,15 @@ export default function VideoDetailScreen() {
               <TouchableOpacity
                 onPress={() => {
                   setIsFullScreen(!isFullScreen);
+                  isFullScreen
+                    ? Orientation.lockToPortrait()
+                    : Orientation.lockToLandscape();
                 }}>
-                <Text style={{color: '#fff', marginBottom: 10}}>
-                  {isFullScreen ? 'Exit' : 'Full Screen'}
-                </Text>
+                {isFullScreen ? (
+                  <FullScreenExitIcon width={20} height={20} color="white" />
+                ) : (
+                  <FullScreenIcon width={20} height={20} color="white" />
+                )}
               </TouchableOpacity>
             </View>
             <Slider
