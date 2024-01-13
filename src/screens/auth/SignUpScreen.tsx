@@ -8,8 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {FormStyle, Typograhpy, WrapperStyle} from '../../GlobalStyle';
 import {COLORS} from '../../theme/theme';
 import {useForm, Controller} from 'react-hook-form';
@@ -19,6 +18,8 @@ import SelectDropdown from 'react-native-select-dropdown';
 import {SignUpFormData, SignUpSchema} from '../../lib/services/SignUpService';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import CheckBox from '@react-native-community/checkbox';
+import Config from 'react-native-config';
+
 export default function SignUpScreen({navigation}: {navigation: any}) {
   const {
     register,
@@ -36,6 +37,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
       referral_code: '',
     },
   });
+  console.log(Config.HOSTNAME);
   const [selected, setSelected] = React.useState('');
   const countries = [
     'Egypt',
@@ -55,7 +57,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
     console.log(data);
     navigation.navigate('OtpScreen');
   };
-  console.log('error', errors);
+
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   return (

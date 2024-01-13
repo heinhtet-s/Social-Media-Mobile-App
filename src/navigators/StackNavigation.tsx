@@ -23,11 +23,11 @@ export default function StackNavigation() {
           gestureDirection: 'horizontal',
           presentation: 'modal',
         }}>
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Detail"
           component={VideoDetailScreen}
-          options={{orientation: 'all'}}
-        />
+          
+        /> */}
         {/* <Stack.Screen name="auth" component={BottomTabNavigation} /> */}
         <Stack.Screen name="Register" component={SignUpScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
