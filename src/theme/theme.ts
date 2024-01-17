@@ -46,19 +46,27 @@ interface Color {
   Text: string;
   Primary: string;
   Background: string;
+  SuccessIconColor: string;
+  SuccessTextColor: string;
+  ErrorIconColor: string;
+  ErrorTextColor: string;
 }
 
 export const COLORS: Color = {
   Primary: '#DA291C',
+  ErrorIconColor: '#F8D4D2',
+  ErrorTextColor: '#57100B',
   Background: '#F8F9FB',
   Black: '#000000',
   Text: '#373A36',
   BlackRGB10: 'rgba(0,0,0,0.1)',
+  SuccessTextColor: '#214D25',
   Orange: '#FF5524',
   OrangeRGBA0: 'rgba(255,85,36,0)',
   Grey: '#333333',
   DarkGrey: '#0b0b0b',
   Yellow: '#E1CD17',
+  SuccessIconColor: '#DCF3DF',
   White: '#FFFFFF',
   WhiteRGBA75: 'rgba(255,255,255,0.75)',
   WhiteRGBA50: 'rgba(255,255,255,0.50)',

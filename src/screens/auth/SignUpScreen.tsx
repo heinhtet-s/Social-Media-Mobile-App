@@ -7,6 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {FormStyle, Typograhpy, WrapperStyle} from '../../GlobalStyle';
@@ -15,10 +16,21 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import CustomTextInput from '../../components/CustomInput';
 import SelectDropdown from 'react-native-select-dropdown';
-import {SignUpFormData, SignUpSchema} from '../../lib/services/SignUpService';
+import {
+  SignUpFormData,
+  SignUpSchema,
+  useUserRegister,
+} from '../../lib/services/SignUpService';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
 import CheckBox from '@react-native-community/checkbox';
 import Config from 'react-native-config';
+import {useGetCountries} from '../../lib/services/CountryServcie';
+import {getData} from '../../lib/services';
+import {Countries, CountriesResponse} from '../../lib/types/countries';
+import {showMessage} from 'react-native-flash-message';
+import {SuccessIcon} from '../../assets/images/svg';
+import {ErrorMessage, SuccessMessage} from '../../lib/utils/FlashMessage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SignUpScreen({navigation}: {navigation: any}) {
   const {
@@ -37,28 +49,28 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
       referral_code: '',
     },
   });
-  console.log(Config.HOSTNAME);
-  const [selected, setSelected] = React.useState('');
-  const countries = [
-    'Egypt',
-    'Canada',
-    'Australia',
-    'Ireland',
-    'UD',
-    'UK',
-    'USA',
-    'Germany',
-    'France',
-    'Italy',
-    'Spain',
-    'Netherlands',
-  ];
-  const onSubmit = (data: any) => {
-    console.log(data);
-    navigation.navigate('OtpScreen');
+  const onSubmit = (data: SignUpFormData) => {
+    mutate(data, {
+      onSuccess: async data => {
+        await AsyncStorage.setItem('token', data?.token ?? '');
+        await AsyncStorage.setItem('user', JSON.stringify(data?.data));
+        navigation.navigate('Otp');
+        SuccessMessage('Successfuly Registered Please Verify Your Email');
+      },
+      onError: (error: any) => {
+        ErrorMessage(error?.response?.data?.message);
+      },
+    });
   };
-
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+  const {
+    data: countriesData,
+    error: countriesError,
+    isLoading: countriesLoading,
+  } = useGetCountries<Countries[]>();
+
+  const {mutate, isLoading} = useUserRegister();
 
   return (
     <KeyboardAvoidingWrapper style={WrapperStyle.container}>
@@ -88,7 +100,7 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
         />
         <CustomTextInput
           name="name"
-          errors={errors.email}
+          errors={errors.name}
           control={control}
           placeholder="Enter your name"
         />
@@ -97,8 +109,8 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
           name="country"
           render={({field: {onChange, value}}) => (
             <SelectDropdown
-              data={countries}
-              onSelect={(selectedItem, index) => onChange(selectedItem)}
+              data={countriesData?.data ?? []}
+              onSelect={(selectedItem, index) => onChange(selectedItem?.name)}
               search={true}
               searchInputStyle={{
                 borderBottomColor: '#eee',
@@ -155,10 +167,10 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
                 textAlign: 'left',
               }}
               buttonTextAfterSelection={(selectedItem, index) => {
-                return selectedItem;
+                return selectedItem?.name;
               }}
               rowTextForSelection={(item, index) => {
-                return item;
+                return item?.name;
               }}
             />
           )}
@@ -223,8 +235,9 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
           </Text>
         </View>
         <TouchableOpacity
+          disabled={!toggleCheckBox}
           onPress={handleSubmit(onSubmit)}
-          style={FormStyle.submitBtn}>
+          style={toggleCheckBox ? FormStyle.submitBtn : FormStyle.disabledBtn}>
           <Text style={Typograhpy.btnText}>Sign up</Text>
         </TouchableOpacity>
 
@@ -238,7 +251,10 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
             },
           ]}>
           Don’t have an account?{' '}
-          <Text style={styles.noticeText}>Sign Up Now</Text>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.noticeText}>Sign Up Now</Text>
+          </TouchableWithoutFeedback>
         </Text>
       </>
     </KeyboardAvoidingWrapper>

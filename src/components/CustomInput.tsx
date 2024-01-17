@@ -48,7 +48,7 @@ const CustomTextInput = <T extends FieldValues>({
           style={{
             flexDirection: 'row',
             alignItems: 'center',
-            marginTop: 5,
+            marginBottom: 10,
           }}>
           <WarningIcon height={20} />
 

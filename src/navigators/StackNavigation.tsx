@@ -26,12 +26,12 @@ export default function StackNavigation() {
         {/* <Stack.Screen
           name="Detail"
           component={VideoDetailScreen}
-          
         /> */}
-        {/* <Stack.Screen name="auth" component={BottomTabNavigation} /> */}
-        <Stack.Screen name="Register" component={SignUpScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Otp" component={OTPScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={SignUpScreen} />
+
+        <Stack.Screen name="HomePage" component={BottomTabNavigation} />
         <Stack.Screen name="Profile" component={ProfileScreen} />
       </Stack.Navigator>
     </SafeAreaView>

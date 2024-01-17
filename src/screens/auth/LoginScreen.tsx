@@ -7,6 +7,8 @@ import {
   Button,
   TouchableOpacity,
   ScrollView,
+  Platform,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 
@@ -15,26 +17,40 @@ import {FormStyle, Typograhpy, WrapperStyle} from '../../GlobalStyle';
 import {COLORS} from '../../theme/theme';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {LoginFormData, LoginSchema} from '../../lib/services/LoginService';
+import {
+  LoginFormData,
+  LoginSchema,
+  useUserLogin,
+} from '../../lib/services/LoginService';
 import CustomInput from '../../components/CustomInput';
 import CustomTextInput from '../../components/CustomInput';
 import KeyboardAvoidingWrapper from '../../components/KeyboardAvoidingWrapper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {ErrorMessage, SuccessMessage} from '../../lib/utils/FlashMessage';
+
 export default function LoginScreen({navigation}: {navigation: any}) {
   const {
-    register,
-    setValue,
     handleSubmit,
     control,
-    reset,
+
     formState: {errors},
   } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
-    navigation.navigate('OtpScreen');
+  const {mutate: login, isLoading: loginLoading} = useUserLogin();
+  const onSubmit = (data: LoginFormData) => {
+    login(data, {
+      onSuccess: async data => {
+        await AsyncStorage.setItem('token', data?.token ?? '');
+        await AsyncStorage.setItem('user', JSON.stringify(data?.data));
+        navigation.navigate('Otp');
+        SuccessMessage('Successfuly Login. Please Enter Otp');
+      },
+      onError: (error: any) => {
+        ErrorMessage(error?.response?.data?.message);
+      },
+    });
   };
-  console.log('error', errors);
 
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   return (
@@ -88,30 +104,54 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             marginTop: 24,
             marginBottom: 32,
           }}>
-          <View style={{}}>
+          {Platform.OS === 'ios' ? (
             <CheckBox
               disabled={false}
               value={toggleCheckBox}
               style={{
-                marginRight: 20,
+                width: 20,
+                height: 20,
+                marginRight: 12,
               }}
               boxType="square"
               onFillColor={COLORS.Primary}
               onCheckColor={COLORS.White}
-              onTintColor={COLORS.Primary}
+              onTintColor="transparent"
               // tintColors={{
               //   true: COLORS.Primary,
               //   false: 'rgba(0, 0, 0, 0.20)',
               // }}
-              onValueChange={newValue => setToggleCheckBox(newValue)}
+              onValueChange={newValue => {
+                console.log('newValue', newValue);
+                setToggleCheckBox(newValue);
+              }}
             />
-          </View>
+          ) : (
+            <CheckBox
+              disabled={false}
+              value={toggleCheckBox}
+              boxType="square"
+              onFillColor={COLORS.Primary}
+              onCheckColor={COLORS.White}
+              onTintColor={COLORS.Primary}
+              tintColors={{
+                true: COLORS.Primary,
+                false: 'rgba(0, 0, 0, 0.20)',
+              }}
+              onValueChange={newValue => {
+                console.log('newValue', newValue);
+                setToggleCheckBox(newValue);
+              }}
+            />
+          )}
+
           <Text style={[Typograhpy.label]}>
             By clicking "Next", I have read, understood, and given my{' '}
             <Text style={styles.noticeText}>consent</Text> and accepted the
             <Text style={styles.noticeText}> Terms of Use.</Text>
           </Text>
         </View>
+
         <TouchableOpacity
           onPress={handleSubmit(onSubmit)}
           style={FormStyle.submitBtn}>
@@ -127,7 +167,10 @@ export default function LoginScreen({navigation}: {navigation: any}) {
             },
           ]}>
           Don’t have an account?{' '}
-          <Text style={styles.noticeText}>Sign Up Now</Text>
+          <TouchableWithoutFeedback
+            onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.noticeText}>Sign Up Now</Text>
+          </TouchableWithoutFeedback>
         </Text>
       </>
     </KeyboardAvoidingWrapper>

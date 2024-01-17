@@ -22,17 +22,29 @@ import RootNavigaion from './src/navigators/RootNavigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
 import {NativeViewGestureHandler} from 'react-native-gesture-handler';
+import {QueryClient, QueryClientProvider} from 'react-query';
+import FlashMessage from 'react-native-flash-message';
 function App(): JSX.Element {
   const Stack = createNativeStackNavigator();
   const isDarkMode = useColorScheme() === 'dark';
   useEffect(() => {
     SplashScreen.hide();
   }, []);
-
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: false,
+      },
+    },
+  });
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <RootNavigaion />
-    </GestureHandlerRootView>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <RootNavigaion />
+        <FlashMessage position="top" />
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
 }
 //   <SafeAreaView style={{flex: 1}}>

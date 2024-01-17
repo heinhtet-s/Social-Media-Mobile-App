@@ -8,6 +8,18 @@ export const Typograhpy = StyleSheet.create({
     fontWeight: '700',
     lineHeight: 40,
   },
+  h2: {
+    color: COLORS.Text,
+    fontSize: 24,
+    fontWeight: '700',
+    lineHeight: 32,
+  },
+  h3: {
+    color: COLORS.Text,
+    fontSize: 28,
+    fontWeight: '700',
+    lineHeight: 32,
+  },
   text: {
     color: COLORS.Text,
     fontSize: 16,
@@ -55,6 +67,14 @@ export const FormStyle = StyleSheet.create({
     alignItems: 'center',
 
     backgroundColor: COLORS.Primary,
+  },
+  disabledBtn: {
+    paddingHorizontal: 32,
+    paddingVertical: 7,
+    borderRadius: 160,
+    alignItems: 'center',
+    backgroundColor: COLORS.Primary,
+    opacity: 0.5,
   },
 });
 export const WrapperStyle = StyleSheet.create({
