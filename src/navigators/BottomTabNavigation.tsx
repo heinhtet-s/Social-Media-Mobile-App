@@ -27,13 +27,6 @@ import SettingHeader from '../components/SettingHeader';
 const Tab = createBottomTabNavigator();
 const BottomTabNavigationData = [
   {
-    key: 'Profile',
-    name: 'Profile',
-    component: ProfileScreen,
-    ActiveIcon: <ProfileActive />,
-    InActiveIcon: <ProfileOutline />,
-  },
-  {
     key: 'Home',
     name: 'Home',
     component: HomeScreen,
@@ -60,6 +53,13 @@ const BottomTabNavigationData = [
     component: SaveScreen,
     ActiveIcon: <SaveActive />,
     InActiveIcon: <SaveOutline />,
+  },
+  {
+    key: 'Profile',
+    name: 'Profile',
+    component: ProfileScreen,
+    ActiveIcon: <ProfileActive />,
+    InActiveIcon: <ProfileOutline />,
   },
 ];
 export default function BottomTabNavigation() {

@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 
@@ -64,6 +65,10 @@ export default function OTPScreen({navigation}: {navigation: any}) {
   };
   useEffect(() => {
     setTimeout(() => otpRef.current.focusField(0), 250);
+    scrollViewRef.current?.scrollTo({
+      y: 90,
+      animated: true,
+    });
   }, []);
 
   useEffect(() => {
@@ -79,10 +84,26 @@ export default function OTPScreen({navigation}: {navigation: any}) {
       setShowResend(false);
     };
   }, [seconds]);
+  useEffect(() => {
+    // Add listener for keyboard show event
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      e => {
+        scrollViewRef.current?.scrollTo({
+          y: e.endCoordinates.height + 90,
+          animated: true,
+        });
+      },
+    );
 
+    return () => {
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+  const scrollViewRef = React.useRef<ScrollView>(null);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
   return (
-    <ScrollView style={WrapperStyle.container}>
+    <ScrollView ref={scrollViewRef} style={WrapperStyle.container}>
       <BackButton />
       <View style={styles.imageWrapper}>
         <Image
@@ -94,7 +115,10 @@ export default function OTPScreen({navigation}: {navigation: any}) {
       <Text style={[Typograhpy.text]}>
         An OTP code will be sent to your email
       </Text>
-      <View>
+      <View
+        style={{
+          marginBottom: 20,
+        }}>
         <OTPInputView
           ref={otpRef}
           style={{width: '100%', height: 200}}

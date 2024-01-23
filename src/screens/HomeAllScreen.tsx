@@ -10,6 +10,7 @@ import {
   Dimensions,
   RefreshControl,
   Button,
+  VirtualizedList,
 } from 'react-native';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Typograhpy, WrapperStyle} from '../GlobalStyle';
@@ -27,6 +28,7 @@ import {ScrollView as GhFlatlist} from 'react-native-gesture-handler';
 import {Host, Portal} from 'react-native-portalize';
 import {NativeViewGestureHandler} from 'react-native-gesture-handler';
 import {HeartOutlineIcon} from '../assets/images/svg';
+import {debounce} from 'lodash';
 const categories = [
   'Category 1',
   'Category 2',
@@ -43,6 +45,7 @@ const categories = [
 const {width, height} = Dimensions.get('window');
 export default function HomeAllScreen({navigation}: {navigation: any}) {
   const bottomSheetRef = useRef<BottomSheet>(null);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
   const data = useMemo(
     () =>
       Array(20)
@@ -74,18 +77,7 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
     ),
     [],
   );
-  const renderItem = useCallback(
-    (item: any) => (
-      <View key={item} style={bottomSheetStyle.itemContainer}>
-        <Image
-          source={require('../assets/images/CardImage.jpeg')}
-          style={{height: 50, width: 50}}
-        />
-        {/* <Text>{item}</Text> */}
-      </View>
-    ),
-    [],
-  );
+
   const renderFlatItem = useCallback(
     ({item, index}: {item: any; index: number}) => (
       <>
@@ -142,9 +134,40 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
     ),
     [],
   );
+  const handleViewableItemsChanged = useCallback(
+    ({viewableItems}: {viewableItems: any[]}) => {
+      console.log(viewableItems, 'viewableItems');
+      if (viewableItems?.length > 0) {
+        const firstVisibleItemIndex = viewableItems[0].index || 0;
+
+        setActiveIndex(firstVisibleItemIndex);
+      }
+    },
+    [],
+  );
+  const viewabiliaConfig = useRef([
+    {
+      viewabilityConfig: {
+        itemVisiblePercentThreshold: 50,
+      },
+      onViewableItemsChanged: debounce(
+        ({viewableItems}: {viewableItems: any[]}) => {
+          if (viewableItems.length > 0 && viewableItems[0].isViewable) {
+            const lastVisibleItemIndex =
+              viewableItems[viewableItems.length - 1].index || 0;
+            setActiveIndex(lastVisibleItemIndex);
+          }
+        },
+        1000,
+        {leading: false, trailing: true}, // Ensure only the trailing call is executed
+      ),
+    },
+  ]);
+  console.log(activeIndex, 'activeIndex');
   return (
     <View>
       <ScrollView
+        overScrollMode="never"
         bounces={false}
         nestedScrollEnabled={true}
         refreshControl={
@@ -158,41 +181,54 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
         </TouchableOpacity>
 
         {/* <Button title="Close Sheet" onPress={handleOpenPress} /> */}
-        {[1, 2, 3, 4, 5].map((item, index) => (
-          <View
-            key={index}
-            style={{
-              marginVertical: 10,
-            }}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardHeaderTitle}>Learn</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('ggwf')}>
-                <Text style={styles.seeMoreHeader}>Show More</Text>
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              data={categories}
-              horizontal={true}
-              style={{
-                paddingHorizontal: 10,
-                paddingEnd: 20,
-              }}
-              bounces={false}
-              // getItemLayout={(_, index) => {
-              //   return {length: width * 0.7, offset: width * 0.7 * index, index};
-              // }}
-              showsHorizontalScrollIndicator={false}
-              decelerationRate={'fast'}
-              snapToInterval={width * 0.7 + 20}
-              snapToAlignment={'center'}
-              scrollEventThrottle={20}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item}) => (
-                <SocialCard cardHeight="auto" cardWidth={width * 0.7} />
-              )}
-            />
+        {/* {[1, 2, 3, 4, 5].map((item, index) => ( */}
+
+        <View
+          // key={index}
+          style={{
+            marginVertical: 10,
+          }}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardHeaderTitle}>Learn</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('ggwf')}>
+              <Text style={styles.seeMoreHeader}>Show More</Text>
+            </TouchableOpacity>
           </View>
-        ))}
+
+          <VirtualizedList
+            data={categories}
+            getItem={(data, index) => data[index]}
+            horizontal={true}
+            contentContainerStyle={{
+              paddingHorizontal: 10,
+            }}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={11}
+            updateCellsBatchingPeriod={100}
+            overScrollMode="never"
+            alwaysBounceHorizontal={false}
+            bounces={false}
+            getItemCount={data => data.length}
+            showsHorizontalScrollIndicator={false}
+            decelerationRate={'fast'}
+            snapToInterval={width * 0.7 + 20}
+            // onViewableItemsChanged={handleViewableItemsChanged}
+            snapToAlignment={'center'}
+            scrollEventThrottle={16}
+            // lazy={true}
+            viewabilityConfigCallbackPairs={viewabiliaConfig.current}
+            keyExtractor={(item, index) => `key-${index}`}
+            renderItem={({item, index}) => (
+              <SocialCard
+                cardHeight="auto"
+                activeIndex={activeIndex === index}
+                cardWidth={width * 0.7}
+              />
+            )}
+          />
+        </View>
+        {/* ))} */}
       </ScrollView>
       <Portal>
         <BottomSheet
@@ -202,11 +238,11 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
             height: 2,
           }}
           ref={bottomSheetRef}
-          index={0}
+          index={-1}
           backdropComponent={renderBackdrop}
           keyboardBehavior="interactive"
           android_keyboardInputMode="adjustResize"
-          // enablePanDownToClose={true}
+          enablePanDownToClose={true}
           snapPoints={['50%']}>
           {/* <BottomSheetView style={{padding: 16}}></BottomSheetView> */}
           {/* <BottomSheetScrollView

@@ -23,10 +23,31 @@ export default function BrowseScreen() {
   console.log(height);
   const flatListRef = useRef<any>(null);
   const currentIndex = useRef(0);
-
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const viewabiliaConfig = useRef([
+    {
+      viewabilityConfig: {
+        itemVisiblePercentThreshold: 80,
+      },
+      onViewableItemsChanged: ({
+        changed,
+        viewableItems,
+      }: {
+        changed: any;
+        viewableItems: any[];
+      }) => {
+        if (viewableItems.length > 0 && viewableItems[0].isViewable) {
+          const firstVisibleItemIndex = viewableItems[0].index || 0;
+          console.log(firstVisibleItemIndex, 'fwe');
+          setActiveIndex(firstVisibleItemIndex);
+        }
+      },
+    },
+  ]);
+  console.log(activeIndex, 'activeIndex');
   const onScroll = (event: any) => {
     const scrollY = event.nativeEvent.contentOffset.y;
-    const index = Math.round(scrollY / (height - 120));
+    const index = Math.round(scrollY / (height - 160));
     // Only snap when crossing to the next item
     if (index !== currentIndex.current) {
       currentIndex.current = index;
@@ -43,23 +64,29 @@ export default function BrowseScreen() {
       style={{
         paddingTop: 10,
       }}
+      overScrollMode="never"
       disableIntervalMomentum={true}
       // onScroll={onScroll}
-      onMomentumScrollEnd={onScroll}
+      // onMomentumScrollEnd={onScroll}
       pagingEnabled
       bounces={false}
       contentContainerStyle={{
         gap: 20,
         paddingBottom: 70,
       }}
-      snapToInterval={height - 100}
+      // snapToInterval={height - 160}
+      viewabilityConfig={viewabiliaConfig.current}
       decelerationRate="fast"
       snapToAlignment={'start'}
-      scrollEventThrottle={20}
-      showsHorizontalScrollIndicator={false}
+      // scrollEventThrottle={10}
+      showsVerticalScrollIndicator={false}
       keyExtractor={(item, index) => index.toString()}
-      renderItem={({item}) => (
-        <SocialCard cardHeight={height - 120} cardWidth={'auto'} />
+      renderItem={({item, index}) => (
+        <SocialCard
+          activeIndex={activeIndex === index}
+          cardHeight={height - 160}
+          cardWidth={'auto'}
+        />
       )}
     />
   );

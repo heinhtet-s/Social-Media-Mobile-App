@@ -6,7 +6,8 @@ import BottomTabNavigation from './BottomTabNavigation';
 export default function RootNavigaion() {
   return (
     <NavigationContainer>
-      <StackNavigation />
+      {/* <StackNavigation /> */}
+      <BottomTabNavigation />
     </NavigationContainer>
   );
 }
