@@ -29,6 +29,11 @@ import {Host, Portal} from 'react-native-portalize';
 import {NativeViewGestureHandler} from 'react-native-gesture-handler';
 import {HeartOutlineIcon} from '../assets/images/svg';
 import {debounce} from 'lodash';
+import {
+  useGetContentCategory,
+  useGetHomeContent,
+} from '../lib/services/ContentService';
+import {ContentHomeData} from '../lib/types/Content';
 const categories = [
   'Category 1',
   'Category 2',
@@ -44,6 +49,7 @@ const categories = [
 
 const {width, height} = Dimensions.get('window');
 export default function HomeAllScreen({navigation}: {navigation: any}) {
+  const {data: homeContent, isLoading} = useGetHomeContent<any>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const data = useMemo(
@@ -158,76 +164,90 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
             setActiveIndex(lastVisibleItemIndex);
           }
         },
-        1000,
+        100,
         {leading: false, trailing: true}, // Ensure only the trailing call is executed
       ),
     },
   ]);
-  console.log(activeIndex, 'activeIndex');
+
   return (
     <View>
       <ScrollView
         overScrollMode="never"
         bounces={false}
-        nestedScrollEnabled={true}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
         style={{
           marginBottom: 55,
         }}>
-        <TouchableOpacity onPress={handleToggleSheet}>
+        {/* <TouchableOpacity onPress={handleToggleSheet}>
           <Text>Show Comments</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
         {/* <Button title="Close Sheet" onPress={handleOpenPress} /> */}
         {/* {[1, 2, 3, 4, 5].map((item, index) => ( */}
 
-        <View
-          // key={index}
-          style={{
-            marginVertical: 10,
-          }}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardHeaderTitle}>Learn</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('ggwf')}>
-              <Text style={styles.seeMoreHeader}>Show More</Text>
-            </TouchableOpacity>
-          </View>
+        {homeContent?.data && homeContent?.data?.length !== 0 ? (
+          homeContent?.data?.map(
+            (contentData: ContentHomeData, index: number) => {
+              return (
+                <View
+                  key={index}
+                  style={{
+                    marginVertical: 10,
+                  }}>
+                  <View style={styles.cardHeader}>
+                    <Text style={styles.cardHeaderTitle}>
+                      {contentData?.name}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('ggwf')}>
+                      <Text style={styles.seeMoreHeader}>Show More</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <VirtualizedList
+                    data={contentData?.category_contents}
+                    getItem={(data, index) => data[index]}
+                    removeClippedSubviews={true}
+                    horizontal={true}
+                    contentContainerStyle={{
+                      paddingHorizontal: 10,
+                    }}
+                    initialNumToRender={5}
+                    maxToRenderPerBatch={5}
+                    windowSize={5}
+                    updateCellsBatchingPeriod={10}
+                    overScrollMode="never"
+                    alwaysBounceHorizontal={false}
+                    bounces={false}
+                    getItemCount={data => data.length}
+                    showsHorizontalScrollIndicator={false}
+                    decelerationRate={'fast'}
+                    snapToInterval={width * 0.7 + 20}
+                    // // onViewableItemsChanged={handleViewableItemsChanged}
+                    snapToAlignment={'center'}
+                    scrollEventThrottle={16}
+                    // lazy={true}
+                    viewabilityConfigCallbackPairs={viewabiliaConfig.current}
+                    keyExtractor={(item, index) => `key-${index}`}
+                    renderItem={({item, index}) => (
+                      <SocialCard
+                        cardHeight="auto"
+                        cardWidth={width * 0.7}
+                        data={item?.content}
+                        // activeIndex={activeIndex === index}
+                      />
+                    )}
+                  />
+                </View>
+              );
+            },
+          )
+        ) : (
+          <Text>No data</Text>
+        )}
 
-          <VirtualizedList
-            data={categories}
-            getItem={(data, index) => data[index]}
-            horizontal={true}
-            contentContainerStyle={{
-              paddingHorizontal: 10,
-            }}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={11}
-            updateCellsBatchingPeriod={100}
-            overScrollMode="never"
-            alwaysBounceHorizontal={false}
-            bounces={false}
-            getItemCount={data => data.length}
-            showsHorizontalScrollIndicator={false}
-            decelerationRate={'fast'}
-            snapToInterval={width * 0.7 + 20}
-            // onViewableItemsChanged={handleViewableItemsChanged}
-            snapToAlignment={'center'}
-            scrollEventThrottle={16}
-            // lazy={true}
-            viewabilityConfigCallbackPairs={viewabiliaConfig.current}
-            keyExtractor={(item, index) => `key-${index}`}
-            renderItem={({item, index}) => (
-              <SocialCard
-                cardHeight="auto"
-                activeIndex={activeIndex === index}
-                cardWidth={width * 0.7}
-              />
-            )}
-          />
-        </View>
         {/* ))} */}
       </ScrollView>
       <Portal>
@@ -418,7 +438,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   cardHeaderTitle: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 'bold',
     color: COLORS.Text,
   },

@@ -4,21 +4,29 @@ import {COLORS} from '../theme/theme';
 import {
   CommentIcon,
   HeartOutlineIcon,
+  PauseIcon,
   SaveOutline,
   ShareIcon,
   SocialSaveOutlineIcon,
 } from '../assets/images/svg';
 import Video from 'react-native-video';
+import {ContentData} from '../lib/types/Content';
+import {Slider} from 'react-native-awesome-slider';
+import {useSharedValue} from 'react-native-reanimated';
 
 const SocialCard = ({
   cardWidth,
   cardHeight,
   activeIndex = false,
+  data,
 }: {
   cardWidth: any;
   cardHeight: any;
   activeIndex?: boolean;
+  data: ContentData;
 }) => {
+  const [duration, setDuration] = React.useState(0);
+
   return (
     <View
       style={[styles.cardContainer, {width: cardWidth, height: cardHeight}]}>
@@ -27,44 +35,72 @@ const SocialCard = ({
         source={require('../assets/images/CardImage.jpeg')}
       /> */}
       <View style={styles.imageStyle}>
-        {/* <Image
-          style={styles.imageStyle}
-          source={require('../assets/images/CardImage.jpeg')}
-        /> */}
+        {data.content_video ? (
+          <>
+            <Image
+              style={styles.imageStyle}
+              source={{
+                uri: data.image_url,
+              }}
+            />
+            {/* <Video
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+              }}
+              // onLoad={(data: any) => setDuration(data.duration)}
+              resizeMode="contain"
+              paused={true}
+              poster={
+                data.image_url ||
+                'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/1697257229853-125476757-demoimage1.jpeg'
+              }
+              onError={e => console.log(e)}
+              posterResizeMode="cover"
+              source={{
+                uri: data.content_video?.video_url,
+              }}
 
-        <Video
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            bottom: 0,
-            right: 0,
-          }}
-          resizeMode="cover"
-          paused={activeIndex ? false : true}
-          poster={
-            'https://images.unsplash.com/32/Mc8kW4x9Q3aRR3RkP5Im_IMG_4417.jpg?ixid=M3wxMjA3fDB8MXxzZWFyY2h8MTZ8fGJhY2tncm91bmQlMjBpbWFnZXxlbnwwfHx8fDE3MDU3MTQyMTh8MA&ixlib=rb-4.0.3'
-          }
-          onError={e => console.log(e)}
-          posterResizeMode="cover"
-          source={require('../assets/images/video.mp4')}
-          // poster={require('../assets/images/CardImage.jpeg')}
-          // source={{
-          //   uri: 'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/videos/1700113652922-241137039-1+Minute+Video+-+Doggie.mp4',
-          // }}
-          // source={{
-          //   uri: 'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/videos/1703581228231-817165778-2308-064-Career-Profile-Gladys-Tech-Sales-Subtitles-V03.mp4',
-          // }}
-        />
+              // poster={require('../assets/images/CardImage.jpeg')}
+              // source={{
+              //   uri: 'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/videos/1700113652922-241137039-1+Minute+Video+-+Doggie.mp4',
+              // }}
+              // source={{
+              //   uri: 'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/videos/1703581228231-817165778-2308-064-Career-Profile-Gladys-Tech-Sales-Subtitles-V03.mp4',
+              // }}
+            /> */}
+            <View style={styles.progressBarContainer}>
+              <View style={styles.flex}>
+                <View style={{flexDirection: 'row'}}>
+                  <PauseIcon width={'20px'} height={'20px'} />
+                </View>
+                <Text style={{color: COLORS.DarkGrey, marginBottom: 10}}>
+                  00:00
+                </Text>
+              </View>
+              <View style={styles.progressBar} />
+            </View>
+          </>
+        ) : (
+          <Image
+            style={styles.imageStyle}
+            source={{
+              uri:
+                data.image_url ||
+                'https://teeup-dev.s3.ap-southeast-1.amazonaws.com/1697257229853-125476757-demoimage1.jpeg',
+            }}
+          />
+        )}
       </View>
       <View style={styles.badge}>
         <Text style={styles.badgeText}>New</Text>
       </View>
       <View style={{padding: 12, flex: 1}}>
         <View style={{flex: 1}}>
-          <Text style={styles.cardTitle}>
-            This is the title. Lorem ipsum dolor
-          </Text>
+          <Text style={styles.cardTitle}>{data?.title}</Text>
           <Text
             style={{
               fontSize: 14,
@@ -73,9 +109,10 @@ const SocialCard = ({
               paddingTop: 12,
               paddingBottom: 16,
               height: 100,
-            }}>
-            This is the description. Lorem ipsum dolor sit amet, consectetur
-            adipiscing elit. Sed euismod.
+            }}
+            numberOfLines={3}
+            ellipsizeMode="tail">
+            {data?.description}
           </Text>
         </View>
 
@@ -143,6 +180,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  flex: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -169,12 +212,27 @@ const styles = StyleSheet.create({
   },
   imageStyle: {
     height: 150,
+    backgroundColor: '#000',
     width: '100%',
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: COLORS.Text,
+  },
+  progressBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+  },
+  progressBar: {
+    width: '100%',
+    height: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 10,
   },
 });
 export default React.memo(SocialCard);

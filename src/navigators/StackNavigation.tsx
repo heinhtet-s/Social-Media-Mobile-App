@@ -27,8 +27,9 @@ export default function StackNavigation() {
           name="Detail"
           component={VideoDetailScreen}
         /> */}
-        <Stack.Screen name="Otp" component={OTPScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Otp" component={OTPScreen} />
+
         <Stack.Screen name="Register" component={SignUpScreen} />
 
         <Stack.Screen name="HomePage" component={BottomTabNavigation} />
