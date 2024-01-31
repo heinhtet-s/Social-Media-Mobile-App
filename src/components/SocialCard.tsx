@@ -19,14 +19,14 @@ const SocialCard = ({
   cardHeight,
   activeIndex = false,
   data,
+  handleOpenComments,
 }: {
   cardWidth: any;
   cardHeight: any;
   activeIndex?: boolean;
   data: ContentData;
+  handleOpenComments: (id: string) => void;
 }) => {
-  const [duration, setDuration] = React.useState(0);
-
   return (
     <View
       style={[styles.cardContainer, {width: cardWidth, height: cardHeight}]}>
@@ -122,7 +122,9 @@ const SocialCard = ({
             <HeartOutlineIcon />
             <Text style={styles.socialItemText}>12</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialItem}>
+          <TouchableOpacity
+            onPress={() => handleOpenComments(data.id)}
+            style={styles.socialItem}>
             <CommentIcon />
             <Text style={styles.socialItemText}>12</Text>
           </TouchableOpacity>

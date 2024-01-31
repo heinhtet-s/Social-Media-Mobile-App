@@ -46,7 +46,7 @@ export default function HomeScreen({navigation}: any) {
     error: countriesError,
     isLoading: countriesLoading,
   } = useGetContentCategory<any>();
-  console.log(categoryData);
+
   if (countriesLoading) return <Text>Loading...</Text>;
   return (
     <Tab.Navigator

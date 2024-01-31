@@ -205,7 +205,6 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
               //   false: 'rgba(0, 0, 0, 0.20)',
               // }}
               onValueChange={newValue => {
-                console.log('newValue', newValue);
                 setToggleCheckBox(newValue);
               }}
             />
@@ -222,7 +221,6 @@ export default function SignUpScreen({navigation}: {navigation: any}) {
                 false: 'rgba(0, 0, 0, 0.20)',
               }}
               onValueChange={newValue => {
-                console.log('newValue', newValue);
                 setToggleCheckBox(newValue);
               }}
             />

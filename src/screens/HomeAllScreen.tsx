@@ -16,14 +16,7 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Typograhpy, WrapperStyle} from '../GlobalStyle';
 import {COLORS} from '../theme/theme';
 import SocialCard from '../components/SocialCard';
-import BottomSheet, {
-  BottomSheetBackdrop,
-  BottomSheetFlatList,
-  BottomSheetScrollView,
-  BottomSheetTextInput,
-  BottomSheetView,
-  BottomSheetVirtualizedList,
-} from '@gorhom/bottom-sheet';
+import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
 import {ScrollView as GhFlatlist} from 'react-native-gesture-handler';
 import {Host, Portal} from 'react-native-portalize';
 import {NativeViewGestureHandler} from 'react-native-gesture-handler';
@@ -34,6 +27,8 @@ import {
   useGetHomeContent,
 } from '../lib/services/ContentService';
 import {ContentHomeData} from '../lib/types/Content';
+import CommentPopUp from '../components/CommentPopUp';
+import {useScrollToTop} from '@react-navigation/native';
 const categories = [
   'Category 1',
   'Category 2',
@@ -52,6 +47,7 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
   const {data: homeContent, isLoading} = useGetHomeContent<any>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
+  const [activeComment, setActiveComment] = useState<string>('');
   const data = useMemo(
     () =>
       Array(20)
@@ -59,10 +55,11 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
         .map((_, index) => `index-${index}`),
     [],
   );
-  const handleToggleSheet = () => {
+  const handleToggleSheet = (id: string) => {
     if (bottomSheetRef.current) {
       bottomSheetRef.current.expand();
     }
+    setActiveComment(id);
   };
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -84,65 +81,8 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
     [],
   );
 
-  const renderFlatItem = useCallback(
-    ({item, index}: {item: any; index: number}) => (
-      <>
-        {index === 0 && (
-          <Text style={bottomSheetStyle.bottomSheetHeader}>128 comments</Text>
-        )}
-        <View style={bottomSheetStyle.itemContainer}>
-          <View style={bottomSheetStyle.commentHeader}>
-            <Image
-              source={require('../assets/images/CardImage.jpeg')}
-              style={bottomSheetStyle.commentImage}
-            />
-            <View>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'flex-end',
-                  flex: 1,
-                }}>
-                <Text style={bottomSheetStyle.commentName}>
-                  Evelyn Smith .{' '}
-                </Text>
-                <Text style={bottomSheetStyle.commentTime}>1 hour ago</Text>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                }}>
-                <Text style={bottomSheetStyle.commentText}>
-                  loream ipsum dolor sit amet, consectetur adipiscing elit.
-                  Phasellus vel enim eu eros finibus tristique. Quisque et
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 4,
-            }}>
-            <HeartOutlineIcon width={16} height={16} />
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: '400',
-                color: COLORS.Text,
-              }}>
-              23
-            </Text>
-          </View>
-        </View>
-      </>
-    ),
-    [],
-  );
   const handleViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: any[]}) => {
-      console.log(viewableItems, 'viewableItems');
       if (viewableItems?.length > 0) {
         const firstVisibleItemIndex = viewableItems[0].index || 0;
 
@@ -169,10 +109,13 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
       ),
     },
   ]);
+  const ref = React.useRef(null);
 
+  useScrollToTop(ref);
   return (
-    <View>
+    <>
       <ScrollView
+        ref={ref}
         overScrollMode="never"
         bounces={false}
         refreshControl={
@@ -233,9 +176,12 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
                     keyExtractor={(item, index) => `key-${index}`}
                     renderItem={({item, index}) => (
                       <SocialCard
+                        key={index}
                         cardHeight="auto"
                         cardWidth={width * 0.7}
                         data={item?.content}
+                        handleOpenComments={handleToggleSheet}
+                        // onPress={() => navigation.navigate('ggwf')}
                         // activeIndex={activeIndex === index}
                       />
                     )}
@@ -250,59 +196,8 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
 
         {/* ))} */}
       </ScrollView>
-      <Portal>
-        <BottomSheet
-          handleIndicatorStyle={{
-            backgroundColor: COLORS.Primary,
-            width: 60,
-            height: 2,
-          }}
-          ref={bottomSheetRef}
-          index={-1}
-          backdropComponent={renderBackdrop}
-          keyboardBehavior="interactive"
-          android_keyboardInputMode="adjustResize"
-          enablePanDownToClose={true}
-          snapPoints={['50%']}>
-          {/* <BottomSheetView style={{padding: 16}}></BottomSheetView> */}
-          {/* <BottomSheetScrollView
-              contentContainerStyle={bottomSheetStyle.contentContainer}>
-              {data.map(renderItem)}
-            </BottomSheetScrollView> */}
-          {/* <BottomSheetFlatList
-              showsVerticalScrollIndicator={true}
-              contentContainerStyle={styles.contentContainer}>
-              {data.map((item, index) => (
-                <Text
-                  key={index}
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '400',
-                    color: COLORS.Text,
-                  }}>
-                  {item}
-                </Text>
-              ))}
-            </> */}
-          <BottomSheetFlatList
-            scrollEnabled={true}
-            data={data}
-            keyExtractor={(_, index) => index.toString()}
-            // getItemCount={data => data.length}
-            // getItem={(data, index) => data[index]}
-
-            renderItem={renderFlatItem}
-            contentContainerStyle={bottomSheetStyle.contentContainer}
-          />
-          <View style={bottomSheetStyle.bottomSheetFooter}>
-            <BottomSheetTextInput style={bottomSheetStyle.input} />
-            <TouchableOpacity>
-              <Text style={{color: COLORS.Primary}}>Send</Text>
-            </TouchableOpacity>
-          </View>
-        </BottomSheet>
-      </Portal>
-    </View>
+      <CommentPopUp bottomSheetRef={bottomSheetRef} id={activeComment} />
+    </>
   );
 }
 

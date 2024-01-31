@@ -27,19 +27,20 @@ import SettingHeader from '../components/SettingHeader';
 const Tab = createBottomTabNavigator();
 const BottomTabNavigationData = [
   {
-    key: 'Home',
-    name: 'Home',
-    component: HomeScreen,
-    ActiveIcon: <HomeActiveIcon width={'24px'} height={'24px'} />,
-    InActiveIcon: <HomeOutlineIcon />,
-  },
-  {
     key: 'Browse',
     name: 'Browse',
     component: BrowseScreen,
     ActiveIcon: <BrowseActiveIcon />,
     InActiveIcon: <BrowseOutlineIcon />,
   },
+  {
+    key: 'Home',
+    name: 'Home',
+    component: HomeScreen,
+    ActiveIcon: <HomeActiveIcon width={'24px'} height={'24px'} />,
+    InActiveIcon: <HomeOutlineIcon />,
+  },
+
   {
     key: 'Mentorship',
     name: 'Mentorship',
@@ -119,7 +120,6 @@ export default function BottomTabNavigation() {
                   return focused ? item.ActiveIcon : item.InActiveIcon;
                 },
                 header: ({navigation, route, options}) => {
-                  console.log(route);
                   return route.name === 'Profile' ? (
                     <SettingHeader navigation={navigation} />
                   ) : (
@@ -141,6 +141,7 @@ export default function BottomTabNavigation() {
                     </Text>
                   );
                 },
+                
               }}
             />
           );

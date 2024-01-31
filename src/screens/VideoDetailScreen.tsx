@@ -47,7 +47,6 @@ export default function VideoDetailScreen() {
 
   const handleLoadStart = () => {
     setIsLoading(true); // Set loading state to true when video starts loading
-    console.log('duration');
   };
   const handleVolumeChange = (value: any) => {
     setVolume(value);
@@ -57,7 +56,6 @@ export default function VideoDetailScreen() {
 
   const handleLoad = () => {
     setIsLoading(false); // Set loading state to false when video is loaded
-    console.log('duration');
   };
   const max = useSharedValue(10);
   const handleVideoPress = () => {
@@ -86,7 +84,6 @@ export default function VideoDetailScreen() {
     }
   };
   const handleBuffer = (meta: any) => {
-    console.log('meta', meta.isBuffering);
     setIsBuffering(meta.isBuffering);
   };
   // onPress={handleVideoPress}
