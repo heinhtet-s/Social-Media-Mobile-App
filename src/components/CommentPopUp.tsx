@@ -100,7 +100,7 @@ const CommentPopUp = ({
     isLoading: commentLoading,
     refetch,
   } = useGetComment<any>(id);
-  console.log(commentData, 'commentData');
+
   // useEffect(() => {
   //   if (id !== '') {
   //     console.log(id, 'id');

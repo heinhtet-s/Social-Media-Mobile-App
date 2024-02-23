@@ -13,22 +13,22 @@ import {
   VirtualizedList,
 } from 'react-native';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Typograhpy, WrapperStyle} from '../GlobalStyle';
+
 import {COLORS} from '../theme/theme';
 import SocialCard from '../components/SocialCard';
 import BottomSheet, {BottomSheetBackdrop} from '@gorhom/bottom-sheet';
-import {ScrollView as GhFlatlist} from 'react-native-gesture-handler';
-import {Host, Portal} from 'react-native-portalize';
-import {NativeViewGestureHandler} from 'react-native-gesture-handler';
-import {HeartOutlineIcon} from '../assets/images/svg';
+
 import {debounce} from 'lodash';
 import {
-  useGetContentCategory,
   useGetHomeContent,
+  usePostComment,
+  usePostContentLike,
+  usePostContentSave,
 } from '../lib/services/ContentService';
 import {ContentHomeData} from '../lib/types/Content';
 import CommentPopUp from '../components/CommentPopUp';
 import {useScrollToTop} from '@react-navigation/native';
+import {useQueryClient} from 'react-query';
 const categories = [
   'Category 1',
   'Category 2',
@@ -44,10 +44,35 @@ const categories = [
 
 const {width, height} = Dimensions.get('window');
 export default function HomeAllScreen({navigation}: {navigation: any}) {
-  const {data: homeContent, isLoading} = useGetHomeContent<any>();
+  const {data: homeContent, isLoading, refetch} = useGetHomeContent<any>();
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [activeComment, setActiveComment] = useState<string>('');
+  const queryClient = useQueryClient();
+  const {mutate: postLike} = usePostContentLike();
+  const {mutate: postSave} = usePostContentSave();
+  const {mutate: postComment} = usePostComment();
+  const handlePostLike = (id: string) => {
+    queryClient.setQueryData('browse', (existingData: any) => {
+      const changeData = existingData?.pages;
+      return existingData;
+    });
+    postLike({
+      id,
+    });
+  };
+  const handlePostSave = (id: string) => {
+    postSave({
+      id,
+    });
+  };
+  const handlePostComment = (id: string, comment: string) => {
+    postComment({
+      id,
+      comment,
+    });
+  };
+
   const data = useMemo(
     () =>
       Array(20)
@@ -65,21 +90,11 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    refetch();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={1}
-        opacity={1}
-      />
-    ),
-    [],
-  );
 
   const handleViewableItemsChanged = useCallback(
     ({viewableItems}: {viewableItems: any[]}) => {
@@ -105,7 +120,7 @@ export default function HomeAllScreen({navigation}: {navigation: any}) {
           }
         },
         100,
-        {leading: false, trailing: true}, // Ensure only the trailing call is executed
+        {leading: false, trailing: true},
       ),
     },
   ]);

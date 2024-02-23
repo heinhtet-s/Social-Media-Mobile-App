@@ -27,14 +27,28 @@ const {width, height} = Dimensions.get('window');
 const SocialCardBrowse = ({
   data,
   handleOpenComments,
+  handlePostLike,
+  handlePostSave,
+  handlePostComment,
 }: // setActiveIndex,
 // index,
 // setIsVideoLoaded,
 // isVideoLoaded,
 {
   data: ContentData;
+  handlePostLike: (id: string) => void;
+  handlePostSave: (id: string) => void;
+  handlePostComment: (id: string, comment: string) => void;
   handleOpenComments: (id: string) => void;
 }) => {
+  const reactionProps = {
+    id: data?.id,
+    likes: data?.likes,
+    comments: data?.comments,
+    saves: data?.saves,
+    is_liked: data?.is_liked,
+    is_saved: data?.is_saved,
+  };
   return (
     <View style={[styles.cardContainer, {width: 'auto', height: height - 143}]}>
       <View style={styles.badge}>
@@ -70,7 +84,13 @@ const SocialCardBrowse = ({
           </Text>
         </View>
         <View style={styles.divider} />
-        <ReactionBar data={data} handleOpenComments={handleOpenComments} />
+        <ReactionBar
+          data={reactionProps}
+          handleOpenComments={handleOpenComments}
+          handlePostLike={handlePostLike}
+          handlePostSave={handlePostSave}
+          handlePostComment={handlePostComment}
+        />
       </View>
     </View>
   );
@@ -196,4 +216,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-export default React.memo(SocialCardBrowse);
+export default SocialCardBrowse;

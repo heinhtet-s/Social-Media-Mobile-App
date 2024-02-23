@@ -13,6 +13,7 @@ import Video from 'react-native-video';
 import {ContentData} from '../lib/types/Content';
 import {Slider} from 'react-native-awesome-slider';
 import {useSharedValue} from 'react-native-reanimated';
+import ReactionBar from './ReactionBar';
 
 const SocialCard = ({
   cardWidth,
@@ -117,26 +118,7 @@ const SocialCard = ({
         </View>
 
         <View style={styles.divider} />
-        <View style={styles.socialContainer}>
-          <TouchableOpacity style={styles.socialItem}>
-            <HeartOutlineIcon />
-            <Text style={styles.socialItemText}>12</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => handleOpenComments(data.id)}
-            style={styles.socialItem}>
-            <CommentIcon />
-            <Text style={styles.socialItemText}>12</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialItem}>
-            <SocialSaveOutlineIcon />
-            <Text style={styles.socialItemText}>12</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialItem}>
-            <ShareIcon />
-            <Text style={styles.socialItemText}>share</Text>
-          </TouchableOpacity>
-        </View>
+        {/* <ReactionBar data={data} handleOpenComments={handleOpenComments} /> */}
       </View>
     </View>
   );

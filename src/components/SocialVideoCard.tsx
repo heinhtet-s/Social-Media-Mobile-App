@@ -23,14 +23,30 @@ import {Slider} from 'react-native-awesome-slider';
 import {useSharedValue} from 'react-native-reanimated';
 import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import ReactionBar from './ReactionBar';
+import {MutationFunction} from 'react-query';
+import {ApiResponse} from '../lib/services';
 const {width, height} = Dimensions.get('window');
+// type PostLikeType = {
+//   id: number | string;
+// };
+// type PostCommentType = {
+//   id: number | string;
+//   comment: string;
+// };
+
 const SocialVideoCard = ({
   activeIndex = false,
   data,
   handleOpenComments,
   setIsVideoLoaded,
   isVideoLoaded,
-}: // setActiveIndex,
+  handlePostLike,
+  handlePostSave,
+  handlePostComment,
+}: // postLike,
+// postSave,
+// postComment,
+// setActiveIndex,
 // index,
 // setIsVideoLoaded,
 // isVideoLoaded,
@@ -42,6 +58,10 @@ const SocialVideoCard = ({
   // index: number;
   setIsVideoLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   isVideoLoaded?: boolean;
+  handlePostLike: (id: string) => void;
+  handlePostSave: (id: string) => void;
+  handlePostComment: (id: string, comment: string) => void;
+  // postLike: MutationFunction<ApiResponse<PostDataType>, PostDataType>;
 }) => {
   //   const handleBuffer = (meta: any) => {
   //     setIsVideoLoaded(meta.isBuffering);
@@ -173,7 +193,13 @@ const SocialVideoCard = ({
         style={{
           paddingHorizontal: 12,
         }}>
-        <ReactionBar data={data} handleOpenComments={handleOpenComments} />
+        <ReactionBar
+          data={data}
+          handleOpenComments={handleOpenComments}
+          handlePostLike={handlePostLike}
+          handlePostSave={handlePostSave}
+          handlePostComment={handlePostComment}
+        />
       </View>
     </View>
   );

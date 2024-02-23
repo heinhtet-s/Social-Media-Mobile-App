@@ -10,19 +10,19 @@ export interface ApiResponse<T> {
   data: T | null;
   status: string;
 }
-axiosConfig.interceptors.request.use(
-  async (config: InternalAxiosRequestConfig) => {
-    if (config.headers) {
-      const token = await AsyncStorage.getItem('token');
-      console.log('token', token);
-      config.headers.Authorization = token ? `Bearer ${token}` : '';
-    }
-    return config;
-  },
-  (error: AxiosError) => {
-    return Promise.reject(error);
-  },
-);
+// axiosConfig.interceptors.request.use(
+//   async (config: InternalAxiosRequestConfig) => {
+//     if (config.headers) {
+//       const token = await AsyncStorage.getItem('token');
+//       console.log('token', token);
+//       // config.headers.Authorization = token ? `Bearer ${token}` : '';
+//     }
+//     return config;
+//   },
+//   (error: AxiosError) => {
+//     return Promise.reject(error);
+//   },
+// );
 // const errorHandling = (error: any) => {
 //   if (error.response.status === 401) {
 //     localStorage.clear();

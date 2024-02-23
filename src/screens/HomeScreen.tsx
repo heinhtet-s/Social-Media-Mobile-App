@@ -41,11 +41,8 @@ const categories = [
 const Tab = createMaterialTopTabNavigator();
 
 export default function HomeScreen({navigation}: any) {
-  const {
-    data: categoryData,
-    error: countriesError,
-    isLoading: countriesLoading,
-  } = useGetContentCategory<any>();
+  const {data: categoryData, isLoading: countriesLoading} =
+    useGetContentCategory<any>();
 
   if (countriesLoading) return <Text>Loading...</Text>;
   return (

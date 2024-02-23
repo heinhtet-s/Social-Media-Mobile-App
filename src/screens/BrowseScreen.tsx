@@ -16,10 +16,15 @@ import Animated, {
 } from 'react-native-reanimated';
 import CommentPopUp from '../components/CommentPopUp';
 import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
-import {useGetBrowseContent} from '../lib/services/ContentService';
+import {
+  useGetBrowseContent,
+  usePostComment,
+  usePostContentLike,
+  usePostContentSave,
+} from '../lib/services/ContentService';
 import {ContentData} from '../lib/types/Content';
-import {useInfiniteQuery} from 'react-query';
-import {getData} from '../lib/services';
+import {useInfiniteQuery, useQueryClient} from 'react-query';
+import {getData, postData} from '../lib/services';
 import {useScrollToTop} from '@react-navigation/native';
 import SocialCardBrowse from '../components/SocialCardBrowse';
 import {debounce} from 'lodash';
@@ -34,6 +39,66 @@ export default function BrowseScreen({navigation}: {navigation: any}) {
   const [activeIndex, setActiveIndex] = React.useState<any>({});
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [isVideoLoaded, setIsVideoLoaded] = React.useState<boolean>(true);
+  const {mutate: postLike} = usePostContentLike();
+  const {mutate: postSave} = usePostContentSave();
+  const {mutate: postComment} = usePostComment();
+  const queryClient = useQueryClient();
+  const handlePostLike = useCallback(
+    async (id: string) => {
+      await queryClient.setQueryData('browse', (existingData: any) => {
+        const changeData = [...existingData?.pages];
+        console.log('changeData', changeData);
+        let postIndex: number = Number(Object.keys(activeIndex)[0])
+          ? Number(Object.keys(activeIndex)[0]) + 1
+          : 0;
+        console.log('postIndex', postIndex);
+        postIndex = Math.floor(postIndex / 10);
+
+        console.log('datass', Number(Object.keys(activeIndex)[0]));
+        console.log('activeIndex', activeIndex);
+        let postColumn = Number(Object.keys(activeIndex)[0])
+          ? Number(Object.keys(activeIndex)[0]) % 10 || 9
+          : 0;
+        console.log('postColumn', postColumn);
+        if (!changeData[postIndex]?.data[postColumn]) {
+          return existingData;
+        }
+
+        changeData[postIndex].data[postColumn].is_liked =
+          !changeData[postIndex].data[postColumn].is_liked;
+        changeData[postIndex].data[postColumn].likes = changeData[postIndex]
+          .data[postColumn].is_liked
+          ? changeData[postIndex].data[postColumn].likes + 1
+          : changeData[postIndex].data[postColumn].likes - 1;
+        console.log(changeData[postIndex].data[postColumn], 'activeData');
+        console.log('changeData', {
+          ...existingData,
+          pages: changeData,
+        });
+        return {
+          ...existingData,
+          pages: changeData,
+        };
+      });
+      // postLike({
+      //   id,
+      // });
+      postData(`content/like/${id}`, {id});
+    },
+    [activeIndex],
+  );
+
+  const handlePostSave = (id: string) => {
+    // postSave({
+    //   id,
+    // });
+  };
+  const handlePostComment = (id: string, comment: string) => {
+    postComment({
+      id,
+      comment,
+    });
+  };
 
   const viewabiliaConfig = useRef([
     {
@@ -44,6 +109,7 @@ export default function BrowseScreen({navigation}: {navigation: any}) {
         if (viewableItems.length > 0 && viewableItems[0].isViewable) {
           const lastVisibleItemIndex =
             viewableItems[viewableItems.length - 1].index || 0;
+
           setActiveIndex({
             [lastVisibleItemIndex]: true,
           });
@@ -66,7 +132,7 @@ export default function BrowseScreen({navigation}: {navigation: any}) {
     isFetchingNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['products'],
+    queryKey: ['browse'],
     queryFn: ({pageParam = 1}) =>
       getData(`/content/browse?page=${pageParam}&pagesize=10`),
     getNextPageParam: (data, total) => {
@@ -140,20 +206,30 @@ export default function BrowseScreen({navigation}: {navigation: any}) {
       if (item?.content_video) {
         return (
           <SocialVideoCard
-            data={item}
+            data={{...item}}
             activeIndex={!!activeIndex[index]}
             handleOpenComments={handleToggleSheet}
             setIsVideoLoaded={setIsVideoLoaded}
             isVideoLoaded={isVideoLoaded}
+            handlePostLike={handlePostLike}
+            handlePostSave={handlePostSave}
+            handlePostComment={handlePostComment}
           />
         );
       }
       return (
-        <SocialCardBrowse data={item} handleOpenComments={handleToggleSheet} />
+        <SocialCardBrowse
+          data={item}
+          handleOpenComments={handleToggleSheet}
+          handlePostLike={handlePostLike}
+          handlePostSave={handlePostSave}
+          handlePostComment={handlePostComment}
+        />
       );
     },
     [activeIndex, handleToggleSheet, isVideoLoaded],
   );
+
   // useScrollToTop(flatListRef);
   return (
     <>
